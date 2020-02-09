@@ -1,0 +1,70 @@
+{% extends 'backend/01backend_base.html' %}
+
+{% block article %}
+    <h3>添加文章</h3>
+    <br>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>
+            <label for="title"> 标题</label>
+            <input type="text" class="form-control" name="title" id="title">
+
+        </p>
+
+        <p>
+            <label for="comment">内容(编辑器）</label>
+            <textarea name="comment" id="comment" cols="30" rows="10" class="form-control"></textarea>
+        </p>
+
+        <div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">分类</h3>
+                </div>
+                <div class="panel-body">
+                    {% for category_obj in category_obj_list %}
+                        <input type="radio" name="category" value="{{ category_obj.pk }}">{{ category_obj.name }}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">标签</h3>
+                </div>
+                <div class="panel-body">
+                    {% for tag_obj in tag_obj_list %}
+                        <input type="checkbox" name="tag" value="{{ tag_obj.pk }}">{{ tag_obj.name }}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+        <p>
+            <input type="submit" class="btn-success btn-sm btn">
+        </p>
+    </form>
+
+    <script charset="utf-8" src="/static/kindeditor/kindeditor-all-min.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create(
+                '#comment',
+                {
+                    width: '100%',
+                    height: '430',
+                    resizeType: 1,
+                     uploadJson : '/upload_img/',
+                     extraFileUploadParams : {
+                        'csrfmiddlewaretoken' : '{{ csrf_token }}',
+                },
+
+                }
+            );
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <script src="{% static 'bootstrap/js/jquery.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+</head>
+<body>
+{#导航条#}
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">BBS</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">首页 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">个人站点</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">更多 <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">文章</a></li>
+                        <li><a href="#">作者</a></li>
+                        <li><a href="#">时间</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">站点</a></li>
+                        <li role="separator" class="divider">站点</li>
+                        <li><a href="#">用户</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">搜索</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                {% if request.user.is_authenticated %}
+                    <li><a href="#">个人站点</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">用户信息 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" data-toggle="modal" data-target=".bs-example-modal-lg">修改密码</a>
+                            </li>
+                            <li><a href="/backend/">后台管理</a></li>
+                            <li><a href="#">修改样式</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/logout/">注销</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+
+                    <ul class="dropdown-menu">
+                        <li><a href="/login/">登录</a></li>
+                        <li><a href="/register">注册</a></li>
+
+                    </ul>
+
+
+                {% endif %}
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        {#        左边广告#}
+        <div class="col-md-2">
+
+            {#            一#}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">招聘广告位</h3>
+                </div>
+                <div class="panel-body">
+                    联系方式
+                </div>
+            </div>
+            {#二#}
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">百度文库下载</h3>
+                </div>
+                <div class="panel-body">
+                    点击链接
+                </div>
+            </div>
+            {#            三#}
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">免费视频观看</h3>
+                </div>
+                <div class="panel-body">
+                    视频地址
+                </div>
+            </div>
+            {#            四#}
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">广告位招聘</h3>
+                </div>
+                <div class="panel-body">
+                    联系地址
+                </div>
+            </div>
+        </div>
+
+        {#        中间内容#}
+        <div class="col-md-8">
+            <ul class="media-list">
+                {#            显示文章内容#}
+                {% for article in article_list %}
+                    <li class="media">
+                        <div class="media-left">
+                            <a href="#">
+                                <img class="media-object img-rounded" width="150px" height="150px"
+                                     src="/media/{{ article.blog.userinfo.avatar }}" alt="..."
+                                     style="border-radius: 50%">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <a href="/{{ article.blog.userinfo.username }}/article/{{ article.pk }}">
+                                <h4 class="media-heading">{{ article.title }}</h4>
+                            </a>
+
+                            <p>{{ article.desc }}</p>
+
+                        </div>
+                        <br>
+                        {#                     名称 发布于 2019-11-05 08:49 评论(0)阅读(56)#}
+                        <a href="/{{ article.blog.userinfo.username }}/">
+                            <span><span
+                                    class="glyphicon glyphicon-user"></span>&nbsp;{{ article.blog.userinfo.username }}</span>
+                        </a>
+                        <span><span
+                                class="glyphicon glyphicon-time"></span>发布于&nbsp; {{ article.create_time|date:'Y-m-d' }}</span>
+                        <span><span
+                                class="glyphicon glyphicon-comment"></span>评论数&nbsp; ({{ article.comment_num }})</span>
+                        <span><span class="glyphicon glyphicon-thumbs-up"></span>点赞数&nbsp; ({{ article.up_num }})</span>
+
+                    </li>
+                    <hr>
+                {% endfor %}
+
+
+            </ul>
+            {{ page_obj.page_html|safe }}
+
+        </div>
+
+
+        {#        右边内容#}
+        <div class="col-md-2 pull-right">
+
+            {# 一#}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">招聘广告位</h3>
+                </div>
+                <div class="panel-body">
+                    联系方式
+                </div>
+            </div>
+            {#二#}
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">百度文库下载</h3>
+                </div>
+                <div class="panel-body">
+                    点击链接
+                </div>
+            </div>
+            {#            三#}
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">免费视频观看</h3>
+                </div>
+                <div class="panel-body">
+                    视频地址
+                </div>
+            </div>
+            {#            四#}
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">广告位招聘</h3>
+                </div>
+                <div class="panel-body">
+                    联系地址
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Large modal -->
+{# 修改密码#}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <h2 class="text-center">修改密码</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-offset-3">
+                    <div class="form-group">
+                        <label for="">用户名</label>
+                        <input type="text" name="username" id="username" disabled value="{{ request.user.username }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="old_password">旧密码</label>
+                        <input type="password" name="old_password" id="old_password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">新密码</label>
+                        <input type="password" name="new_password" id="new_password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">确认密码</label>
+                        <input type="password" name="confirm_password" id="confirm_password" class="form-control">
+                    </div>
+
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" id="b1">修改密码</button>
+                    <span style="color: red;" id="error"></span>
+                    <br>
+                    <br>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#b1').on('click', function () {
+        alert(12)
+        $.ajax({
+            url: "/set_password/",
+            type: 'post',
+            data: {
+                'old_password': $("#old_password").val(),
+                'new_password': $('#new_password').val(),
+                'confirm_password': $('#confirm_password').val(),
+                // 'csrfmiddlewaretoken': '{{ csrf_token }}'
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+
+            success: function (data) {
+                if (data.code == 1000) {
+                    window.location.href = data.url
+                } else {
+                    $('#error').text(data.msg)
+                }
+
+            }
+        });
+alert()
+    });
+</script>
+
+</body>
+</html>

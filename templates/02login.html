@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <script src="{% static 'bootstrap/js/jquery.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1 class="text-center">登录界面</h1>
+
+        <div class="col-md-6 col-lg-offset-3">
+
+            <div class="form-group">
+                <label for="username"> 用户名</label>
+                <input type="text" id='username' name="username" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="password"> 密 &nbsp;码:&nbsp;</label>
+
+                <input type="password" id='password' name="password" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="">验证码</label>
+
+                <div class="row">
+                    <div class="col-md-6">
+
+
+                        <input type="text" id='code' name='code' class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <img src="/get_code/" alt="" width="260px" height="35px" class="img-rounded">
+                    </div>
+                </div>
+
+            </div>
+            <div>
+                {#                    <input type="reset" value="重置" class="btn btn-primary btn-sm" style="margin: 10px 35px">#}
+                <button class="btn btn-primary" id="b1">登录</button>
+                <span style="color:red" id="error"></span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 点击图片刷新验证码
+    $('img').on('click', function () {
+        var img_url = $(this).attr('src') + "?";
+        $(this).attr('src', img_url);
+
+    });
+
+
+    $('#b1').click(function () {
+        alert(234);
+        // 登录验证
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: {
+                'username': $('#username').val(),
+                'password': $("#password").val(),
+                'code': $('#code').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (data) {
+                if (data.code == 1000) {
+                    // 成功进入首页
+                    location.href = data.url
+                } else {
+                    // 渲染错误信息
+                    $('#error').text(data.msg);
+                    // 失败刷新验证码
+                    $('img').attr('src', '/get_code/2');
+
+
+                }
+
+            }
+
+        });
+    });
+
+
+</script>
+</body>
+</html>

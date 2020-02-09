@@ -1,0 +1,42 @@
+{% extends '06base.html' %}
+
+{% block content %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="myfile">
+                头像<img src="/media/{{ request.user.avatar }}/" alt="" id="avatar" width="80px" height="80px"
+                       style="margin: 10px 10px;border-radius: 50%">
+            </label>
+
+            <input type="file" id="myfile" name="avatar" style="display: none;">
+        </div>
+        <input type="submit" class="btn btn-success" value="提交">
+
+    </form>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+
+        // 文件阅读器,
+        $('#myfile').change(function () {
+            // 将图片改为用户上传的图片
+            // 1.产生文件阅读器队形
+            var fileReader = new FileReader();
+
+
+            // 2.获取用户上传的文件
+            var fileUp = $(this)[0].files[0];
+
+            // 3.让文件阅读器读取该文件
+            fileReader.readAsDataURL(fileUp);
+            // 4.利用文件阅读器将文件展示出来
+            fileReader.onload = function () {
+                $('#avatar').attr('src', fileReader.result)
+            }
+
+        });
+    </script>
+{% endblock %}

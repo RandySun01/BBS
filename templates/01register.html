@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+    <script src="{% static 'bootstrap/js/jquery.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-lg-offset-3">
+            <h1 class="text-center">注册界面</h1>
+            <form action="" class="form-horizontal" id="myform" novalidate>
+                {% csrf_token %}
+                {#                标签 #}
+
+                {% for f_obj in form_obj %}
+                    <div class="form-group">
+                        <label for="{{ f_obj.auto_id }}">{{ f_obj.label }} </label>
+
+                        {{ f_obj }}
+                        <span style="color:red" class="pull-right"></span>
+                    </div>
+
+                {% endfor %}
+                {#              头像通过点击图片上传头像,隐藏file标签#}
+                <div class="form-group">
+                    <label for="myfile">
+                        头像<img src="{% static 'img/default1.png' %}" alt="" id="avatar" width="80px" height="80px"
+                               style="margin: 10px 10px;border-radius: 50%">
+                    </label>
+
+                    <input type="file" id="myfile" name="avatar" style="display: none;">
+                </div>
+                {#              注册按钮，通过ajax检测登录信息, 报错提示#}
+                <input type="button" class="btn btn-success pull-right" id='commit' value="注册">
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // 文件阅读器,
+    $('#myfile').change(function () {
+        // 将图片改为用户上传的图片
+        // 1.产生文件阅读器队形
+        var fileReader = new FileReader();
+
+
+        // 2.获取用户上传的文件
+        var fileUp = $(this)[0].files[0];
+
+        // 3.让文件阅读器读取该文件
+        fileReader.readAsDataURL(fileUp);
+        // 4.利用文件阅读器将文件展示出来
+        fileReader.onload = function () {
+            $('#avatar').attr('src', fileReader.result)
+        }
+
+    });
+
+
+    $('#commit').on('click', function () {
+        var formData = new FormData();
+        // serializeArray() 获取form表单中的键值对, each循环获取数组中内容
+        $.each($('#myform').serializeArray(), function (index, obj) {
+            formData.append(obj.name, obj.value)
+
+        });
+
+        // 添加上传的图片
+        formData.append('avatar', $('#myfile')[0].files[0]);
+
+        $.ajax({
+            url: '',
+            type: 'post',
+            data: formData,
+            contentType:false,
+            processData:false,
+            success: function (data) {
+                if (data.code == 1000) {
+                    window.location.href = data.url
+                }else {
+                   $.each(data.msg, function (index, obj) {
+                       // data.msg是字段，所以index是key, obj value值是一个报错的数组信息
+                       // 通过index手动拼接input框字段
+                       var tagId = '#id_'+index;
+                       {#alert(tagId)#}
+
+                       // 获取出错的标签下面的span标签添加报错的信息,给父标签添加一个红色错误边框
+                       $(tagId).next().text(obj[0]).parent().addClass('has-error')
+
+                   });
+                }
+            }
+        });
+
+        $('input').focus(function () {
+           $(this).next().text('').parent().removeClass('has-error')
+        });
+    });
+</script>
+</body>
+</html>
